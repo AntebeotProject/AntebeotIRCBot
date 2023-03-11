@@ -1,0 +1,24 @@
+>>> r_.cookies['captcha_id']
+'anYOqM0T'
+
+okey. save it id for user that get captcha (ask)
+wait answer for user
+user write answer to captcha by id (then we will to save captcha photo?) (yes we are have to then) (is bullshit blyad) (yeap)
+
+
+
+
+>>> import requests as r
+>>> r_ = r
+>>> r_ = r.get('https://antebeot.ru/restapi/captcha?w=get')
+>>> r_.cookie
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+AttributeError: 'Response' object has no attribute 'cookie'. Did you mean: 'cookies'?
+>>> r_.cookies
+<RequestsCookieJar[Cookie(version=0, name='captcha_id', value='anYOqM0T', port=None, port_specified=False, domain='antebeot.ru', domain_specified=False, domain_initial_dot=False, path='/', path_specified=True, secure=False, expires=1678533836, discard=False, comment=None, comment_url=None, rest={}, rfc2109=False)]>
+>>> r_.cookies['captcha_id']
+'anYOqM0T'
+>>> r_.cookies['captcha_id']
+'anYOqM0T'
+>>>
