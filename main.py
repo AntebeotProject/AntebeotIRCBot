@@ -1,6 +1,7 @@
 from IRC.IRC import IRC as IRC
 
 def main():
- m_irc = IRC(port=1919)
+ # TODO: config
+ m_irc = IRC(port=6668)
  
 main()

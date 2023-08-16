@@ -1,5 +1,10 @@
 import requests
+
 uCookiesSessions = {} # user_part : req.cookies
+REST_API_WEB='https://antebeot.world/'
+CAPTCHA_PATH='/var/www/html/captchas'
+CAPTCHA_WEBSITE='byyesxdjlrywth252dcplh46ypyvurpbjudr5koswiu27ywecz3q.b32.i2p/captchas/'
+
 def uCookiesSessionsExists(user_part,what):
  try:
   if uCookiesSessions[user_part] is None or  uCookiesSessions[user_part][what] is None: return False
@@ -10,16 +15,16 @@ class commands:
   #commands that allows in PM also in channel
   # type to method is will be (irc, user_part, to, msg)
   @staticmethod 
-  def uTestCaptcha(irc, user_part, to, msg):
+  async def uTestCaptcha(irc, user_part, to, msg):
    global uCookiesSessions
-   captcha_req = requests.get('https://antebeot.ru/restapi/captcha?w=get')
+   captcha_req = requests.get(REST_API_WEB+'restapi/captcha?w=get')
    cData = captcha_req.content
    if not captcha_req.cookies['captcha_id'] is None: 
     # drop files in the dir though cron/... 
-    with open("C:\\poolserver\\ver3\\HTTPServer\\temporarly\\%s.png" % (captcha_req.cookies['captcha_id']) , "wb" ) as f:
+    with open("%s/%s.png" % (CAPTCHA_PATH, captcha_req.cookies['captcha_id']) , "wb" ) as f:
      f.write(cData)
      f.close()
-     irc.wMsg(to, "path to your file: https://antebeot.ru/restapi/temporarly/%s.png" % (captcha_req.cookies['captcha_id']))
+     await irc.wMsg(to, "path to your file: %s/%s.png" % (CAPTCHA_WEBSITE,captcha_req.cookies['captcha_id']))
      try: 
       if uCookiesSessions[user_part] is None: uCookiesSessions[user_part] = {}   #captcha_req.cookies # add cookies. not rewrite it! todo:!
      except Exception as e:  uCookiesSessions[user_part] = {}
@@ -32,37 +37,37 @@ class commands:
   
   
   @staticmethod
-  def uTestCaptcha_(irc, user_part, to, msg):
+  async def uTestCaptcha_(irc, user_part, to, msg):
    global uCookiesSessions
    print("uCookieSession now is (#2)")
    print(uCookiesSessions[user_part])
    try: 
        if uCookiesSessions[user_part] is None or  uCookiesSessions[user_part]['captcha_id'] is None:
-        irc.wMsg(to, "You are not ask captcha before! (#1)")
+        await irc.wMsg(to, "You are not ask captcha before! (#1)")
         return False
        answ = msg.split(" ", 2)[1].replace("\n", "").replace("\r", "")
        print("answ")
        print(answ)
-       captcha_answ = requests.get( 'https://antebeot.ru/restapi/captcha?w=answerTest&a=%s' % answ, cookies={ 'captcha_id': uCookiesSessions[user_part]['captcha_id'] } )
-       irc.wMsg(to, captcha_answ.content)
+       captcha_answ = requests.get( '%s/restapi/captcha?w=answerTest&a=%s' % (REST_API_WEB,answ), cookies={ 'captcha_id': uCookiesSessions[user_part]['captcha_id'] } )
+       await irc.wMsg(to, captcha_answ.content)
    except Exception as e: 
-        irc.wMsg(to, "You are not ask captcha before! (#2) : " + str(e))
+        await irc.wMsg(to, "You are not ask captcha before! (#2) : " + str(e))
         return False
    #
   @staticmethod
-  def uPing(irc, user_part, to, msg):
+  async def uPing(irc, user_part, to, msg):
    print("Answer to ping")
-   irc.wMsg(to, "pong")
+   await irc.wMsg(to, "pong")
    pass
   @staticmethod
-  def uRegister(irc, user_part, to, msg):
-   irc.wMsg(to, "Not implemented yet")
+  async def uRegister(irc, user_part, to, msg):
+   await irc.wMsg(to, "Not implemented yet")
    pass
   @staticmethod
-  def uDashboard(irc, user_part, to, msg):
-   r = requests.get('https://antebeot.ru/restapi/dashboard')
+  async def uDashboard(irc, user_part, to, msg):
+   r = requests.get('%s/restapi/dashboard' % REST_API_WEB)
    decoded = r.content.decode("utf-8")
-   irc.wMsg(to, decoded)
+   await irc.wMsg(to, decoded)
    pass
   both_cmnds = {
     'ping' : uPing,
