@@ -1,0 +1,3 @@
+[submodule "AntebeotCli_py"]
+	path = AntebeotCli_py
+	url = git@github.com:wipedlifepotato/AntebeotCli_py.git

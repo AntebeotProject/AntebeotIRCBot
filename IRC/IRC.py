@@ -8,7 +8,7 @@ from threading import Thread
 from .commands import commands
 
 DEF_COMMAND_CHAR = '!'
-DoPingTimer=5.0
+DoPingTimer=60.0
 
 class IRC:
   
