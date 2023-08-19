@@ -26,7 +26,7 @@ class commands:
      
   # there is example how to use cookie
   
-  
+  #def dropNewLine(msg): return msg.replace("\r", "").replace("\n","")
   @staticmethod
   async def uTestCaptcha_(irc, user_part, to, msg):
    global aClient
@@ -50,12 +50,52 @@ class commands:
   async def uDashboard(irc, user_part, to, msg):
    await irc.wMsg(to, aClient.getDashboard())
    pass
+  @staticmethod
+  async def uHelp(irc, user_part, to, msg):
+      await irc.wMsg(to, "use a instruction from ...")
+      pass
+  # Auth/Reg parts
+  @staticmethod
+  async def uAuth(irc, user_part, to,msg):
+      parts = msg.split(" ")
+      if len(parts) != 4:
+          await irc.wMsg(to, "auth login password captcha(get from getCaptcha)")
+          return False
+      global aClient
+      res = aClient.do_auth (user_part, parts[1], parts[2], parts[3])
+      #print(res)
+      if not type(res) is str and res["result"] == True:
+          await irc.wMsg(to, "Авторизировано")
+      else:
+         await irc.wMsg(to, "Ошибка {}". format( str(res) ) )
+  @staticmethod
+  async def uRegister(irc, user_part, to, msg):
+      parts = msg.split(" ")
+      if len(parts) != 5:
+          await irc.wMsg(to, "register login password password2 captcha(get from getCaptcha)")
+          return False
+      global aClient
+      if parts[2] != parts[3]:
+          await irc.wMsg(to, "not correct password2")
+          return False
+      #parts[4] = self.dropNewLine(parts[4])
+
+      res = aClient.do_registration(user_part, parts[1], parts[2], parts[3], parts[4])
+      if not type(res) is str and res["result"] == True:
+          await irc.wMsg(to, "Зарегестрировано")
+      else:
+         await irc.wMsg(to, "Ошибка {}". format( str(res) ) )
+      #await irc.wMsg( to, str(res) )
+  # end of auth/reg parts
   # both_cmnds for a privmsg to PM and channel
   both_cmnds = {
     'ping' : uPing,
     'register': uRegister,
     'dashboard': uDashboard,
     'getCaptcha': uTestCaptcha,
-    'testCaptcha': uTestCaptcha_
+    'testCaptcha': uTestCaptcha_,
+    'help': uHelp,
+    'register': uRegister,
+    'auth': uAuth
   }
   

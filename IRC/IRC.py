@@ -18,8 +18,10 @@ class IRC:
     await self.user_msg_handler(user_part, to, msg)
 
   async def user_msg_handler(self, user_part, to, msg):
+    msg = msg.replace("\r", "").replace("\n", "")
+    # ^^ drop all \r and \n in msg
     print('user_part is ' + user_part)
-    parts = msg.replace("\r","").split(" ")
+    parts = msg.split(" ")
     print("parts is")
    
     if parts[0] in commands.both_cmnds:

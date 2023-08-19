@@ -14,7 +14,7 @@ def main():
    c.read('settings.ini')
    # TODO: config
    m_irc = IRC( addr = c['irc']['addr'], port = int(c['irc']['port']) )
-  except KeyError as _:
+  except KeyError as _: # TODO: found where is a bug.
    WriteDefConfig()
    print("Configure your settings.ini firstly")
 
