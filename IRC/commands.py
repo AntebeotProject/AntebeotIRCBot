@@ -87,6 +87,50 @@ class commands:
          await irc.wMsg(to, "Ошибка {}". format( str(res) ) )
       #await irc.wMsg( to, str(res) )
   # end of auth/reg parts
+
+  @staticmethod
+  async def uGetAllowCoins(irc, user_part, to, msg):
+      try:
+          uApi = aClient.getAPIForUser(user_part, ignoreNotSession = False)
+          coins = uApi.get_allow_coins()
+          await irc.wMsg( to,  "Криптовалюты, поддерживаемые: {} ".format( ",".join(coins) ) )
+      except Exception as e:
+          print(e)
+          await irc.wMsg(to, "залогиньтесь: " + str(e) )
+      pass
+     
+  @staticmethod
+  async def uOutputMoney(irc, user_part, to, msg):
+      # TODO
+      try:
+          parts = msg.split(" ")
+          if len(parts) != 2:
+           await irc.wMsg(to, "getOwnInput %cryptocurrency%")
+           return False
+          uApi = aClient.getAPIForUser(user_part, ignoreNotSession = False)
+          inputAddr = uApi.get_own_input()
+          await irc.wMsg( to,  "Входящий адрес: {} ".format( inputAddr ) )
+      except Exception as e:
+          print(e)
+          await irc.wMsg(to, "залогиньтесь: " + str(e) )
+  @staticmethod
+  async def uGetOwnInput(irc, user_part, to, msg):
+      try:
+          parts = msg.split(" ")
+          if len(parts) != 2:
+           await irc.wMsg(to, "getOwnInput %cryptocurrency%")
+           return False
+          uApi = aClient.getAPIForUser(user_part, ignoreNotSession = False)
+          inputAddr = uApi.get_own_input(parts[1])
+          if inputAddr == None:
+           await irc.wMsg(to, "У вас отсутсвовал входящий адрес, сгенерировали новый")
+           inputAddr = uApi.gen_new_address(parts[1])
+           pass
+          await irc.wMsg( to,  "Входящий адрес: {} ".format( str(inputAddr) ) )
+      except Exception as e:
+          print(e)
+          await irc.wMsg(to, "залогиньтесь: " + str(e) )
+      pass
   # both_cmnds for a privmsg to PM and channel
   both_cmnds = {
     'ping' : uPing,
@@ -96,6 +140,10 @@ class commands:
     'testCaptcha': uTestCaptcha_,
     'help': uHelp,
     'register': uRegister,
-    'auth': uAuth
+    'auth': uAuth,
+    #
+    'getOwnInput': uGetOwnInput,
+    'withdraw': uOutputMoney,
+    'getCoinList': uGetAllowCoins
   }
   
