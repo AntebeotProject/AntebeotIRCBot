@@ -2,10 +2,14 @@
 # License ....
 # 2023 (c)
 import asyncio
+import signal
 import socket,re,sys,time,threading
 
 from threading import Thread
 from .commands import commands
+
+# For save all things. TODO: is not cool variant but for now is ok. TODO
+from .commands import aClient as aClient
 
 DEF_COMMAND_CHAR = '!'
 DoPingTimer=60.0
@@ -87,9 +91,15 @@ class IRC:
               pass
           pass
         pass
+  def split_string_to_blocks(self,s, n):
+    return [s[i:i + n] for i in range(0, len(s), n)]
 
   async def wMsg(self, to, msg):
-    await self.doSend("PRIVMSG %s :%s" % (to,msg))
+    # TODO: check last timestamp of send message and get a pause before send a message
+    msgs = self.split_string_to_blocks(msg, 100)
+    for msg_ in msgs:
+        time.sleep(1)
+        await self.doSend("PRIVMSG %s :%s" % (to,msg_))
 
   async def ping_pong(self, l):
     print("Do Ping")
@@ -126,13 +136,24 @@ class IRC:
     # Threading do to
     threading.Timer(DoPingTimer, self.doPing).start()
     await self.read_loop()
-
+  def doSigTerm(self, signum, frame):
+      print ( " Do close all " )
+      aClient.saveAll()
+      sys.exit(0)
+      pass
   def __init__(self, addr = "localhost", port = 1919,  encode= "utf-8"):
     n_addr = (addr, port)
     self.connected = False
     self.encode = encode
     self.sock = socket.create_connection( n_addr )
     self.sock.setblocking(True)
+    #
+    aClient.loadAll()
+    signal.signal(signal.SIGTERM, self.doSigTerm)
+    signal.signal(signal.SIGINT, self.doSigTerm)
+
+     #loads all things
+    #
 
     loop = asyncio.get_event_loop()
     loop.run_until_complete(self.doConnection())
