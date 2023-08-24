@@ -110,6 +110,8 @@ class IRC:
     n_msg = ("PONG %s\r\n" % l[1]).encode(self.encode)
     self.sock.send(n_msg)
     await self.joinToChannel("testbot")
+    await self.joinToChannel("ru")
+    await self.joinToChannel("antebeot")
     #
     await self.wMsg("#testbot", "hewwo world")
     print("Ping is done. bot will be joined to channel")

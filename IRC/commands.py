@@ -53,7 +53,7 @@ class commands:
    pass
   @staticmethod
   async def uHelp(irc, user_part, to, msg):
-      await irc.wMsg(to, "use a instruction from ...")
+      await irc.wMsg(to, "use a instruction from https://gist.github.com/wipedlifepotato/108d8bc97475d41d04596ec2a405145e")
       pass
   # Auth/Reg parts
   @staticmethod
@@ -223,6 +223,13 @@ class commands:
       res = uApi.do_trade(parts[1], parts[2])
       await irc.wMsg( to, str(res) )
       pass
+
+  @staticmethod
+  async def ugOrders(irc, user_part, to, msg):
+      uApi = aClient.getAPIForUser(user_part, ignoreNotSession = False)
+      res = uApi.get_orders()
+      await irc.wMsg(to, str( res ) )
+      pass
   # both_cmnds for a privmsg to PM and channel
   both_cmnds = {
     'ping' : uPing,
@@ -245,6 +252,7 @@ class commands:
     'gOwnOrders': uGOwnOrders,
     'rOrder': uROrder,
     'cActiveOrder': uCActiveOrder,
-    'doTrade': uDoTrade
+    'doTrade': uDoTrade,
+    'gOrders': ugOrders
   }
   
